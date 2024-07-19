@@ -1,5 +1,5 @@
 lib_sources = [  # All source files (excluding headers)
-    'hello.cpp'
+    'hello.cpp', 'verlet.cpp'
 ]
 
 lib = static_library(
