@@ -9,7 +9,7 @@
 #include <header_files/types.h>
 #define save_interval 1000
 
-void Energy_conservation(double sim_length=100, double timestep=0.001,
+void energy_conservation_simulation(double sim_length=100, double timestep=0.001,
                          double sigma=1.0,double mass=1.0, double epsilon=1.0)
 {
 

@@ -16,11 +16,18 @@ int main(int argc, char* argv[]) {
         pgm_selection = argv[1];
         std::cout <<pgm_selection<< " is being executed." << std::endl;
     }
-    if(pgm_selection=="Energy_conservation"){
+    if(pgm_selection=="energy_conservation_simulation"){
 
-        Energy_conservation();
+        energy_conservation_simulation();
 
     }
+    else if(pgm_selection=="berendsen_simulation"){
+
+        auto time_sim=berendsen_thermostat_simulation(50);
+        std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
+
+    }
+
     else {
         std::cout << "Invalid argument(s)" << std::endl;
         exit(0);
