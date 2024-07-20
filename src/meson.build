@@ -9,3 +9,14 @@ lib = static_library(
 )
 
 lib_incdirs = include_directories('.')
+
+executable(
+    'src_main',
+    'main.cpp', 'xyz.cpp', 'Energy_conservation_LJunits.cpp', 'lj_direct_summation.cpp',
+    include_directories : [lib_incdirs],
+    link_with : [lib],
+    dependencies : [eigen, mpi]
+)
+
+fs = import('fs')
+fs.copyfile('data_files/lj54.xyz')
