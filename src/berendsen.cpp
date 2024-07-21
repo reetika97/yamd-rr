@@ -13,7 +13,7 @@ void berendsen_thermostat(Atoms &atoms, double temperature, double timestep,
     double rescale_factor;
     rescale_factor = 1 + (((target_temp/temperature)-1)*(timestep/relaxation_time));
     rescale_factor = std::pow(rescale_factor, 0.5);
-    std::cout<<"lambda: "<<rescale_factor<<std::endl;
+    //std::cout<<"lambda: "<<rescale_factor<<std::endl;
     atoms.velocities = atoms.velocities * rescale_factor;
 
 

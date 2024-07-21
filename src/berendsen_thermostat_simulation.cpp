@@ -11,7 +11,7 @@
 #include <chrono>
 #define save_interval 1000
 
-double berendsen_thermostat_simulation(int nb_atoms= 100){
+double berendsen_thermostat_simulation(int nb_atoms= 100, double target_temp=0.3){
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -45,11 +45,10 @@ double berendsen_thermostat_simulation(int nb_atoms= 100){
         Ekin = ekin_direct_summation(atoms, mass);
         auto T_old = 2 * Ekin / (atoms.nb_atoms() * kb *3);
 
-        berendsen_thermostat(atoms,T_old,timestep,100 * timestep);
+        berendsen_thermostat(atoms,T_old,timestep,
+                             500*timestep, target_temp);
         Ekin = ekin_direct_summation(atoms, mass);
         T = 2 * Ekin / (atoms.nb_atoms() * kb *3);
-        std::cout<<"T-old: "<<T_old<<std::endl;
-        std::cout<<"T-new: "<<T<<std::endl;
 
         if(i%1000 == 0){
             Etot = Epot + Ekin;
@@ -60,6 +59,23 @@ double berendsen_thermostat_simulation(int nb_atoms= 100){
             write_xyz(traj, atoms); // All trajectories in one file.
         }
     }
+
+    for(int i=0; i<sim_length/timestep; i++) {
+
+        verlet_step1(atoms.positions, atoms.velocities, atoms.forces, timestep, mass);
+        Epot = lj_direct_summation(atoms);
+        verlet_step2(atoms.velocities, atoms.forces, timestep, mass);
+
+        Ekin = ekin_direct_summation(atoms, mass);
+
+        if(i%1000 == 0){
+            Etot = Epot + Ekin;
+            std::cout<<"Energy(pot+kin): "<<Epot<<" + "<<Ekin<<" = "<<Etot<<std::endl;
+            E<<Epot<<";"<<Ekin<<";"<<Etot<<std::endl;
+            write_xyz(traj, atoms); // All trajectories in one file.
+        }
+    }
+
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
     return duration.count();

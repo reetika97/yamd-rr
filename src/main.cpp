@@ -7,15 +7,15 @@
 
 int main(int argc, char* argv[]) {
 
-    std::string pgm_selection = "Default";
-    if(argc==1) {
+    std::string pgm_selection = "berendsen_simulation"; //"Default";
+    /*if(argc==1) {
         std::cout << "Select_program: " && std::cin >> pgm_selection;
         std::cout << pgm_selection << " is being executed." << std::endl;
     }
     else if(argc==2 ){
         pgm_selection = argv[1];
         std::cout <<pgm_selection<< " is being executed." << std::endl;
-    }
+    }*/
     if(pgm_selection=="energy_conservation_simulation"){
 
         energy_conservation_simulation();
