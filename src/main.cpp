@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[]) {
 
-    std::string pgm_selection = "berendsen_simulation"; //"Default";
+    std::string pgm_selection = "berendsen_execution_time"; //"Default";
     /*if(argc==1) {
         std::cout << "Select_program: " && std::cin >> pgm_selection;
         std::cout << pgm_selection << " is being executed." << std::endl;
@@ -25,6 +25,19 @@ int main(int argc, char* argv[]) {
 
         auto time_sim=berendsen_thermostat_simulation(50);
         std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
+
+    }
+
+    else if(pgm_selection=="berendsen_execution_time"){
+
+        std::ofstream exec_time("run_time.csv");
+        for(int i=5; i<150; i+=5){
+
+            auto time_sim=berendsen_execution_time(i);
+            std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
+            exec_time<<i<<";"<<time_sim;
+
+        }
 
     }
 

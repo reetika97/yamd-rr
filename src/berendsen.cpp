@@ -6,7 +6,7 @@
 #include <cmath>
 
 
-void berendsen_thermostat(Atoms &atoms, double temperature, double timestep,
+double berendsen_thermostat(Atoms &atoms, double temperature, double timestep,
                           double relaxation_time, double target_temp=0.3){
 
 
@@ -15,6 +15,8 @@ void berendsen_thermostat(Atoms &atoms, double temperature, double timestep,
     rescale_factor = std::pow(rescale_factor, 0.5);
     //std::cout<<"lambda: "<<rescale_factor<<std::endl;
     atoms.velocities = atoms.velocities * rescale_factor;
+
+    return rescale_factor;
 
 
 }
