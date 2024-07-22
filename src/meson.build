@@ -1,5 +1,5 @@
 lib_sources = [  # All source files (excluding headers)
-    'hello.cpp', 'verlet.cpp', 'lj_direct_summation.cpp', 'berendsen.cpp'
+    'hello.cpp', 'verlet.cpp', 'lj_direct_summation.cpp', 'berendsen.cpp', 'neighbors.cpp'
 ]
 
 lib = static_library(
@@ -14,7 +14,8 @@ executable(
     'src_main',
     'main.cpp', 'xyz.cpp',
     'Energy_conservation_LJunits.cpp', 'lj_direct_summation.cpp','lattice.cpp',
-    'berendsen_thermostat_simulation.cpp', 'berendsen.cpp', 'berendsen_execution_time.cpp',
+    'berendsen_thermostat_simulation.cpp', 'berendsen.cpp',
+    'neighbors.cpp', 'equilibration_with_rc.cpp',
     include_directories : [lib_incdirs],
     link_with : [lib],
     dependencies : [eigen, mpi]
