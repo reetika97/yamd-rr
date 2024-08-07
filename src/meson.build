@@ -16,8 +16,10 @@ executable(
     'main.cpp', 'xyz.cpp',
     'Energy_conservation_LJunits.cpp', 'lj_direct_summation.cpp','lattice.cpp',
     'berendsen_thermostat_simulation.cpp', 'berendsen.cpp',
-    'neighbors.cpp', 'equilibration_with_rc.cpp',
-    'gold_melting_point.cpp', 'preheat_atom_cluster.cpp', 'ducastelle.cpp',
+    'neighbors.cpp', 'equilibration_with_rc.cpp', 'domain.cpp',
+    'gold_melting_point.cpp', 'preheat_atom_cluster.cpp', 'ducastelle.cpp', 'energy_conservation_mpi.cpp',
+    'gold_nanowire.cpp',
+
     include_directories : [lib_incdirs],
     link_with : [lib],
     dependencies : [eigen, mpi]

@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[]) {
 
-    std::string pgm_selection = "Default"; //"Default";
+    std::string pgm_selection = "gold_nano_wire"; //"Default";
     if(argc==1) {
         std::cout << "Select_program: " && std::cin >> pgm_selection;
         std::cout << pgm_selection << " is being executed." << std::endl;
@@ -44,6 +44,13 @@ int main(int argc, char* argv[]) {
 
     }
 
+    else if(pgm_selection=="equilibration_with_rc"){
+
+        auto time_sim=equilibration_with_rc(50);
+        std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
+
+    }
+
     else if(pgm_selection=="equilibration_rc_execution_time"){
 
         std::ofstream exec_time("run_time_with_rc.csv");
@@ -58,13 +65,6 @@ int main(int argc, char* argv[]) {
 
     }
 
-    else if(pgm_selection=="equilibration_with_rc"){
-
-        auto time_sim=equilibration_with_rc(50);
-        std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
-
-    }
-
     else if(pgm_selection=="gold_melting_point"){
 
         gold_melting_point("cluster_923.xyz", true);
@@ -73,6 +73,19 @@ int main(int argc, char* argv[]) {
         gold_melting_point("3871_heated_cluster.xyz");
 
     }
+
+    else if(pgm_selection=="energy_conservation_mpi"){
+
+        energy_conservation_mpi();
+
+    }
+
+    else if(pgm_selection=="gold_nano_wire"){
+
+        gold_nanowire();
+
+    }
+
 
     else {
         std::cout << "Invalid argument(s)" << std::endl;

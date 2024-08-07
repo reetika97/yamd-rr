@@ -70,13 +70,16 @@ double lj_direct_summation_rc(Atoms &atoms, double rc, double epsilon = 1.0, dou
 
 }
 
-double ekin_direct_summation(Atoms &atoms, double mass){
+double ekin_direct_summation(Atoms &atoms, double mass, int len=-10){
+
+    if(len==-10) len = atoms.nb_atoms();
+
     double Ekin =0.0;
-    for(int i=0; i<atoms.nb_atoms(); i++){
+    for(int i=0; i<len; i++){
 
         Eigen::Vector3d vi{atoms.velocities.col(i)};
 
-        double v = vi.norm(); //velocity magnitude
+        double v = vi.norm();
 
         Ekin += std::pow(v,2);
     }

@@ -25,7 +25,7 @@ double equilibration_with_rc(int nb_atoms=50, double target_temp=0.3,
     timestep = 0.001;
     sim_length = 100;
 
-    auto Epot = lj_direct_summation(atoms, rc);
+    auto Epot = lj_direct_summation_rc(atoms, rc);
     auto Ekin = ekin_direct_summation(atoms, mass);
     double Etot = Epot + Ekin;
 

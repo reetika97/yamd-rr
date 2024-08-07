@@ -16,4 +16,8 @@ double equilibration_with_rc(int nb_atoms=50, double target_temp=0.3,
 
 void gold_melting_point(std::string filename, bool preheat_cluster=false);
 
+void energy_conservation_mpi();
+
+void gold_nanowire();
+
 #endif // YAMD_RR_FUNCTIONS_H
