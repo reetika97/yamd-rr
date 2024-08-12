@@ -34,8 +34,8 @@ double berendsen_thermostat_simulation(int nb_atoms= 100,
 
     std::ofstream traj,E;
     if(write_to_file){
-        traj.open("traj2.xyz");
-        E.open("E.csv");
+        traj.open("traj_5.xyz");
+        E.open("E_5.csv");
         E << "Epot;Ekin;Etot" << std::endl;
     }
     for(int i=0; i<sim_length/timestep; i++) {
