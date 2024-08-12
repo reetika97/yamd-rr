@@ -10,7 +10,7 @@
 #include <header_files/verlet.h>
 #include <iostream>
 #define RELAX_TIME 1500
-#define AVERAGING_WINDOW 200
+#define AVERAGING_WINDOW 500
 
 
 

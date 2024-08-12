@@ -13,6 +13,7 @@
 #include <header_files/ducastelle.h>
 #include <chrono>
 #include <header_files/domain.h>
+#define SCALE_INTERVAL 10000
 
 void gold_nanowire(){
 
@@ -21,6 +22,8 @@ void gold_nanowire(){
 
     std::cout<<MPI::comm_size(MPI_COMM_WORLD)<<std::endl;
 
+    double lz = 135, lz0 = 135;
+    Eigen::Array3d domain_length;
 
     Domain domain(MPI_COMM_WORLD, {50, 50, 135},
                   {1, 1, MPI::comm_size(MPI_COMM_WORLD)},
@@ -29,10 +32,10 @@ void gold_nanowire(){
     //ToCheck: Why am I getting different values with periodicity 001?
 
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
-    double rc = 7.0, timestep = 5, nb_steps = 10000; //1 timestep is 1fs
+    double rc = 7.0, timestep = 5, nb_steps = 80000; //1 timestep is 1fs
     double kb = 8.617 * pow(10,-5), mass=196.967*103.6; //eV/K, g/mol
 
-    double Etot, Epot_loc, Epot_total, Ekin_loc, Ekin_total;
+    double Etot, Epot_loc, Epot_total, Ekin_loc, Ekin_total, ghost_force_g;
 
     auto [names, positions]
         {read_xyz("whisker_small.xyz")};
@@ -40,15 +43,26 @@ void gold_nanowire(){
     atoms.masses.setConstant(mass);
 
     std::ofstream traj("traj2.xyz");
+    std::ofstream svf("svf.csv");
+    svf<<"strain;force_lg\n";
 
     domain.enable(atoms);
 
     NeighborList neighbor_list;
     neighbor_list.update(atoms, rc);
 
-    ducastelle(atoms, neighbor_list, rc, A, xi, p, q, re);
+    double ghost_force=0.0;
+    ducastelle_2(atoms, neighbor_list, domain.nb_local(), ghost_force, rc, A, xi, p, q, re);
 
     for(int i=0; i<nb_steps; i+=timestep) {
+
+        ghost_force=0;
+        if (i % SCALE_INTERVAL == 0 and i != 0){
+            std::cout<<"Scaling at "<<i<<std::endl;
+            lz += 2;
+            domain_length<<50,50,lz;
+            domain.scale(atoms, domain_length);
+        }
 
         verlet_step1(atoms.positions, atoms.velocities, atoms.forces, timestep,
                      mass);
@@ -57,7 +71,7 @@ void gold_nanowire(){
         domain.update_ghosts(atoms, 2 * rc);
         neighbor_list.update(atoms, rc);
 
-        ducastelle(atoms, neighbor_list, rc, A, xi, p, q, re);
+        ducastelle_2(atoms, neighbor_list, domain.nb_local(), ghost_force, rc, A, xi, p, q, re);
 
         verlet_step2(atoms.velocities, atoms.forces, timestep, mass);
 
@@ -68,6 +82,8 @@ void gold_nanowire(){
                       MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
         MPI_Allreduce(&Ekin_loc, &Ekin_total, 1,
                       MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&ghost_force, &ghost_force_g, 1,
+                      MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
 
         if (i % 1000 == 0) {
@@ -75,14 +91,18 @@ void gold_nanowire(){
             if(domain.rank() == 0) {
                 Etot = Epot_total + Ekin_total;
                 write_xyz(traj, atoms);
+                auto strain = (lz-lz0) / lz0;
                 std::cout << "Energy(pot+kin): " << Epot_total << " + "
                           << Ekin_total << " = " << Etot << std::endl;
+                std::cout << "Strain: " << strain << std::endl;
+                std::cout << "F_lg: " << ghost_force_g << std::endl;
+                svf<< strain <<  ";" << ghost_force_g << std::endl;
             }
 
             domain.enable(atoms);
             domain.update_ghosts(atoms, 2 * rc);
             neighbor_list.update(atoms, rc);
-            ducastelle(atoms, neighbor_list, rc, A, xi, p, q, re);
+            ducastelle_2(atoms, neighbor_list, domain.nb_local(), ghost_force, rc, A, xi, p, q, re);
         }
 
     }
