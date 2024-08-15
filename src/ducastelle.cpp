@@ -196,8 +196,11 @@ double ducastelle_2(Atoms &atoms, const NeighborList &neighbor_list,
                 energies(i) += repulsive_energy;
                 energies(j) += repulsive_energy;
 
-                if (j>= nb_local) {
-                     f_lg += pair_force;
+                if (j >= nb_local && i < nb_local ) {
+                    if( (atoms.positions(2,i) - atoms.positions(2,j)) <0 ){
+                        f_lg -= pair_force;
+                    }
+
                 }
 
                 // sum per-atom forces
@@ -206,8 +209,8 @@ double ducastelle_2(Atoms &atoms, const NeighborList &neighbor_list,
             }
         }
     }
-    Eigen::Vector3d flg{f_lg};
-    ghost_force = flg.norm();
+
+    ghost_force = f_lg(2);
     atoms.energies = energies;
     // Return total potential energy
     return energies.sum();

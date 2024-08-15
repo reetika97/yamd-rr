@@ -13,7 +13,7 @@
 #include <header_files/ducastelle.h>
 #include <chrono>
 #include <header_files/domain.h>
-#define SCALE_INTERVAL 10000
+#define SCALE_INTERVAL 200
 
 void gold_nanowire(){
 
@@ -22,23 +22,23 @@ void gold_nanowire(){
 
     std::cout<<MPI::comm_size(MPI_COMM_WORLD)<<std::endl;
 
-    double lz = 135, lz0 = 135;
+    double lz = 144.25, lz0 = 144.25;
     Eigen::Array3d domain_length;
 
-    Domain domain(MPI_COMM_WORLD, {50, 50, 135},
+    Domain domain(MPI_COMM_WORLD, {50, 50, 144.25},
                   {1, 1, MPI::comm_size(MPI_COMM_WORLD)},
                   {0, 0, 1});
 
     //ToCheck: Why am I getting different values with periodicity 001?
 
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
-    double rc = 7.0, timestep = 5, nb_steps = 80000; //1 timestep is 1fs
-    double kb = 8.617 * pow(10,-5), mass=196.967*103.6; //eV/K, g/mol
+    double rc = 7.0, timestep = 5, nb_steps = 10000; //1 timestep is 1fs
+    double kb = 8.617 * pow(10,-5), mass=196.967*103.6, strain; //eV/K, g/mol
 
     double Etot, Epot_loc, Epot_total, Ekin_loc, Ekin_total, ghost_force_g;
 
     auto [names, positions]
-        {read_xyz("whisker_small.xyz")};
+        {read_xyz("whisker_small_T0.xyz")};
     Atoms atoms(positions);
     atoms.masses.setConstant(mass);
 
@@ -54,12 +54,14 @@ void gold_nanowire(){
     double ghost_force=0.0;
     ducastelle_2(atoms, neighbor_list, domain.nb_local(), ghost_force, rc, A, xi, p, q, re);
 
-    for(int i=0; i<nb_steps; i+=timestep) {
+    for(int i=0; i<nb_steps; i++) {
 
         ghost_force=0;
         if (i % SCALE_INTERVAL == 0 and i != 0){
+
+            svf<< strain <<  ";" << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
             std::cout<<"Scaling at "<<i<<std::endl;
-            lz += 2;
+            lz += 0.3;
             domain_length<<50,50,lz;
             domain.scale(atoms, domain_length);
         }
@@ -78,6 +80,10 @@ void gold_nanowire(){
         Epot_loc = atoms.energies.head(domain.nb_local()).sum();
         Ekin_loc= ekin_direct_summation(atoms, mass, domain.nb_local());
 
+        auto T = 2 * Ekin_loc / (atoms.nb_atoms() * kb * 3);
+        berendsen_thermostat(atoms,T,timestep,
+                             100*timestep, 10e-5);
+
         MPI_Allreduce(&Epot_loc, &Epot_total, 1,
                       MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
         MPI_Allreduce(&Ekin_loc, &Ekin_total, 1,
@@ -86,17 +92,17 @@ void gold_nanowire(){
                       MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
 
-        if (i % 1000 == 0) {
+        if (i % 200 == 0) {
             domain.disable(atoms);
             if(domain.rank() == 0) {
                 Etot = Epot_total + Ekin_total;
                 write_xyz(traj, atoms);
-                auto strain = (lz-lz0) / lz0;
+                strain = (lz-lz0) / lz0;
                 std::cout << "Energy(pot+kin): " << Epot_total << " + "
                           << Ekin_total << " = " << Etot << std::endl;
                 std::cout << "Strain: " << strain << std::endl;
-                std::cout << "F_lg: " << ghost_force_g << std::endl;
-                svf<< strain <<  ";" << ghost_force_g << std::endl;
+                std::cout << "F_lg: " << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
+
             }
 
             domain.enable(atoms);
