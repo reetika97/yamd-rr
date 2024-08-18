@@ -20,6 +20,12 @@ int main(int argc, char* argv[]) {
 
     if(pgm_selection=="energy_conservation_simulation"){
 
+        //energy_conservation_simulation(100,0.0001);
+        //energy_conservation_simulation(100,0.005);
+        //energy_conservation_simulation(100,0.002);
+        //energy_conservation_simulation(100,0.01);
+        //energy_conservation_simulation(100,0.02);
+        //energy_conservation_simulation(100,0.05);
         energy_conservation_simulation();
 
     }

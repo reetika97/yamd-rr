@@ -48,7 +48,7 @@ double berendsen_thermostat_simulation(int nb_atoms= 100,
         auto T_old = 2 * Ekin / (atoms.nb_atoms() * kb *3);
 
         berendsen_thermostat(atoms,T_old,timestep,
-                             500*timestep, target_temp);
+                             100*timestep, target_temp);
         Ekin = ekin_direct_summation(atoms, mass);
         T = 2 * Ekin / (atoms.nb_atoms() * kb *3);
 

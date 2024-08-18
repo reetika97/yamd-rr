@@ -31,7 +31,7 @@ void energy_conservation_simulation(double sim_length=100, double timestep=0.001
 
     //Initialize file buffer for Total Energy and Atom Trajectory
     std::ofstream traj("traj.xyz");
-    std::ofstream Etot_file("Etot_file.csv");
+    std::ofstream Etot_file(std::to_string(timestep)+"_Etot_file.csv");
 
     Etot_file << "Epot;Ekin;Etot"<<std::endl;
 
@@ -44,7 +44,7 @@ void energy_conservation_simulation(double sim_length=100, double timestep=0.001
         Ekin = ekin_direct_summation(atoms, mass);
         Etot = Epot + Ekin;
 
-        if(i%save_interval == 0){
+        if(i % save_interval == 0){
             std::cout<<Epot<<" + "<<Ekin<<" = "<<Etot<<std::endl;
             Etot_file<<Epot<<";"<<Ekin<<";"<<Etot<<std::endl;
             write_xyz(traj, atoms); // All trajectories in one file.
