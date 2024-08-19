@@ -10,6 +10,23 @@
 #include <iostream>
 #include <chrono>
 #define save_interval 1000
+/**
+ * @brief Equilibrates a molecular dynamics system of atoms, applying the Berendsen thermostat
+ * to control the temperature. The simulation runs in two phases:
+ *
+ * 1. **Equilibration Phase:** The Berendsen thermostat is applied to adjust the system temperature to a target value.
+ * 2. **Energy conservation Phase:** The thermostat is turned off, allowing the system to relax naturally, with energy conservation monitored.
+ *
+ * The function logs potential energy, kinetic energy, total energy at regular intervals, and optionally writes trajectories to files.
+ *
+ * @param nb_atoms The number of atoms in the simulation. Defaults to 100.
+ * @param target_temp The target temperature for the system in the temperature control phase. Defaults to 0.3.
+ * @param write_to_file If true, the energy data and atom trajectories are written to files ("E_5.csv" and "traj_5.xyz"). Defaults to true.
+ *
+ * All other parameters can be changed in the code
+ *
+ * @return double The duration of the simulation in seconds.
+ */
 
 double berendsen_thermostat_simulation(int nb_atoms= 100,
                                        double target_temp=0.3,

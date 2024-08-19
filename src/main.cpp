@@ -5,10 +5,39 @@
 #include <header_files/xyz.h>
 #include <header_files/functions.h>
 
+/**
+ * @brief Main function for selecting and executing different simulation programs.
+ *
+ * This program allows users to select from energy conservation, Berendsen thermostat,
+ * and gold nanowire simulations for single type of particles. Depending
+ * on the selection, the corresponding simulation function is executed.
+ *
+ * @param argc Number of command-line arguments.
+ *             If argc == 1, the user is asked to choose selection in the simulation program.
+ *             If argc == 2, if second argument is provided it is used as the simulation selection.
+ * @param argv Array of command-line arguments.
+ *             The second element (argv[1]) is used as the simulation program selection if provided.
+ *
+ * @return int Returns 0 upon successful execution. Exits with code 0 if invalid input is provided.
+ *
+ * The available simulations are:
+ *  - "energy_conservation_simulation": Executes the energy conservation simulation.
+ *  - "berendsen_simulation": Runs the Berendsen thermostat simulation for equilibrating MD system.
+ *  - "berendsen_execution_time": Measures execution time of Berendsen thermostat simulation for varying number of atoms.
+ *  - "equilibration_with_rc": Runs equilibration with cutoff radius.
+ *  - "equilibration_rc_execution_time": Measures execution time of the equilibration with RC simulation for varying number of atoms.
+ *  - "gold_melting_point": Executes simulations to determine the melting point of gold clusters.
+ *  - "energy_conservation_mpi": Runs the MPI version of the energy conservation simulation.
+ *  - "gold_nano_wire": Executes the gold nanowire simulation for calculating stress and strain.
+ *
+ * If an invalid program selection is made, an error message is displayed and the program exits.
+ * Recommended to execute from command line for smoother experience.
+ */
 
 int main(int argc, char* argv[]) {
 
-    std::string pgm_selection = "gold_nano_wire"; //"Default";
+    std::string pgm_selection = "Default"; //"Default";
+
     if(argc==1) {
         std::cout << "Select_program: " && std::cin >> pgm_selection;
         std::cout << pgm_selection << " is being executed." << std::endl;
@@ -31,7 +60,7 @@ int main(int argc, char* argv[]) {
     }
     else if(pgm_selection=="berendsen_simulation"){
 
-        auto time_sim=berendsen_thermostat_simulation(50);
+        auto time_sim=berendsen_thermostat_simulation(100, 0.2);
         std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
 
     }
@@ -52,7 +81,7 @@ int main(int argc, char* argv[]) {
 
     else if(pgm_selection=="equilibration_with_rc"){
 
-        auto time_sim=equilibration_with_rc(50);
+        auto time_sim=equilibration_with_rc(100, 0.2);
         std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
 
     }

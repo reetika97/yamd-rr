@@ -14,6 +14,19 @@
 #include <chrono>
 #include <header_files/domain.h>
 
+/**
+ * @brief MD simulation using MPI parallel processing for energy conservation.
+ *
+ * This function performs a parallelized MD simulation using MPI (Message Passing Interface) to handle
+ * large computations across multiple processors. The simulation involves updating atom positions and velocities
+ * using the Velocity Verlet integration while conserving energy.
+ * The simulation uses Ducastelle potential. The potential energy, kinetic energy, and total energy, along with trajectory
+ * of the system are calculated and logged at regular intervals.
+ *
+ * @param none
+ *
+ * All parameters can be changed directly in the code.
+ */
 
 void energy_conservation_mpi(){
 

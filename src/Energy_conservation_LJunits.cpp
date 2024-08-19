@@ -9,6 +9,21 @@
 #include <header_files/types.h>
 #define save_interval 1000
 
+/**
+ * @brief Simulates the energy conservation of MD simulation using
+ * Lennard-Jones potential and the Velocity Verlet algorithm.
+ * The potential energy, kinetic energy, and total energy, along with trajectory
+ * of the system are calculated and logged at regular intervals.
+ *
+ * @param sim_length The total length of the simulation in arbitrary time units. Defaults to 100.
+ * @param timestep The time step for the simulation. Defaults to 0.001.
+ * @param sigma The characteristic distance for the Lennard-Jones potential. Defaults to 1.0.
+ * @param mass The mass of each atom in the system. Defaults to 1.0.
+ * @param epsilon The energy parameter of the Lennard-Jones potential. Defaults to 1.0.
+ *
+ * All other parameters can be changed directly in the code.
+ */
+
 void energy_conservation_simulation(double sim_length=100, double timestep=0.001,
                          double sigma=1.0,double mass=1.0, double epsilon=1.0)
 {

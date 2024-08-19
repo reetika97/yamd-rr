@@ -11,6 +11,25 @@
 #include <header_files/types.h>
 #define save_interval 1000
 
+/**
+ * @brief Simulates the equilibration of molecular dynamics system of atoms
+ * using Berendsen thermostat and Lennard-Jones potential with
+ * cutoff radius and measures the simulation duration. The simulation runs in two phases:
+ *
+ * 1. **Equilibration Phase:** The Berendsen thermostat is applied to adjust the system temperature to a target value.
+ * 2. **Energy conservation Phase:** The thermostat is turned off, allowing the system to relax naturally, with energy conservation monitored.
+ *
+ * The function logs potential energy, kinetic energy, total energy at regular intervals, and optionally writes trajectories to files.
+ *
+ * @param nb_atoms The number of atoms in the simulation. Defaults to 50.
+ * @param target_temp The target temperature for the system during the temperature control phase. Defaults to 0.3.
+ * @param write_to_file If true, the energy data and atom trajectories are written to files ("E.csv" and "traj2.xyz"). Defaults to true.
+ *
+ * All other parameters can be changed directly in the code
+ *
+ * @return double The duration of the simulation in seconds.
+ */
+
 double equilibration_with_rc(int nb_atoms=50, double target_temp=0.3,
                              bool write_to_file=true){
 

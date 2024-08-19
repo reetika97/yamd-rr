@@ -5,6 +5,16 @@
 #include "header_files/types.h"
 #include <cmath>
 
+/**
+ * @brief Initializes a simple cubic lattice of atoms based on the number of desired atoms.
+ * The lattice is constructed by uniformly placing atoms in a 3D grid, where the lattice constant is set to 1.0 sigma.
+ *
+ * @param nb_atoms The total number of atoms to be placed in the lattice.
+ *
+ * @return `Atoms` object containing the positions of the initialized atoms in the lattice.
+ *
+ * All other parameters can be changed directly in the code
+ */
 
 Atoms lattice_init(int nb_atoms){
 

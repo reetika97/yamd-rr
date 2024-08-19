@@ -7,6 +7,16 @@
 #include <cmath>
 #include "header_files/neighbors.h"
 
+/**
+ * @brief Computes the Lennard-Jones potential and forces acting on atoms.
+ *
+ * @param atoms `Atoms` object containing atom positions and forces.
+ * @param epsilon Energy parameter Default = 1.0
+ * @param sigma Length parameter Default = 1.0
+ *
+ * @return The total potential energy.
+ */
+
 double lj_direct_summation(Atoms &atoms, double epsilon = 1.0, double sigma = 1.0){
     //atoms.energies() is not used or updated in this function!
     //atoms.energies() set to default
@@ -40,6 +50,17 @@ double lj_direct_summation(Atoms &atoms, double epsilon = 1.0, double sigma = 1.
 
 }
 
+/**
+ * @brief Computes the Lennard-Jones potential and forces with a cutoff radius.
+ *
+ * @param atoms `Atoms` object containing atom positions and forces.
+ * @param rc Cutoff radius for the potential calculation.
+ * @param epsilon Energy parameter Default = 1.0
+ * @param sigma Length parameter Default = 1.0
+ *
+ * @return The total potential energy.
+ */
+
 double lj_direct_summation_rc(Atoms &atoms, double rc, double epsilon = 1.0, double sigma = 1.0){
 
     double Epot;
@@ -69,6 +90,16 @@ double lj_direct_summation_rc(Atoms &atoms, double rc, double epsilon = 1.0, dou
     return Epot;
 
 }
+
+/**
+ * @brief Computes the kinetic energy of the atoms.
+ *
+ * @param atoms `Atoms` object containing atom velocities.
+ * @param mass Mass of each atom.
+ * @param len Number of atoms to consider. Default = all atoms.
+ *
+ * @return The total kinetic energy.
+ */
 
 double ekin_direct_summation(Atoms &atoms, double mass, int len=-10){
 
