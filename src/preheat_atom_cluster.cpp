@@ -12,7 +12,7 @@
 void preheat_atom_cluster(std::string filename){
 
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
-    double rc = 7.0, timestep = 5, nb_steps = 10000; //1 timestep is 1fs
+    double rc = 7.0, timestep = 5, nb_steps = 5000; //1 timestep is 1fs
     double kb = 8.617 * pow(10,-5), mass=196.967*103.6; //eV/K, g/mol
     NeighborList neighbor_list;
     double Epot, Ekin, Etot, T;
@@ -26,7 +26,9 @@ void preheat_atom_cluster(std::string filename){
     std::ofstream E(std::to_string(atoms.nb_atoms()) + "_E_preheat.csv");
     E<<"Epot;Ekin;Etot"<<std::endl;
 
-    for(int i=0; i<nb_steps; i+=timestep) {
+    Epot = ducastelle(atoms, neighbor_list, rc, A, xi, p, q, re);
+
+    for(int i=0; i<nb_steps; i++) {
 
         verlet_step1(atoms.positions, atoms.velocities, atoms.forces, timestep,
                      mass);
@@ -52,7 +54,7 @@ void preheat_atom_cluster(std::string filename){
     }
     std::cout<<"Equilibrating : "<<std::endl;
 
-    for(int i=0; i<1000; i+=timestep) {
+    for(int i=0; i<1000; i++) {
 
         verlet_step1(atoms.positions, atoms.velocities, atoms.forces, timestep,
                      mass);
@@ -76,6 +78,7 @@ void preheat_atom_cluster(std::string filename){
     std::cout << "T: " << T << std::endl;
     std::cout << "Energy(pot+kin): " << Epot << " + " << Ekin << " = "
               << Etot << std::endl;
+
     write_xyz(traj, atoms); // Trajectory of heated cluster
 
 }

@@ -16,7 +16,7 @@
 
 void gold_melting_point(std::string filename, bool preheat_cluster=false){
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
-    double rc = 7.0, timestep = 5, nb_steps = 800000; //1 timestep is 1fs
+    double rc = 5.0, timestep = 5, nb_steps = 800000; //1 timestep is 1fs
     double kb = 8.617 * pow(10,-5), mass=196.967*103.6; //eV/K, g/mol
     NeighborList neighbor_list;
     double Epot, Ekin, Etot, T;
@@ -30,6 +30,7 @@ void gold_melting_point(std::string filename, bool preheat_cluster=false){
     auto [names, positions, velocities]
         {read_xyz_with_velocities(filename)};
     Atoms atoms(positions, velocities);
+    auto perturbations = atoms.velocities;
     neighbor_list.update(atoms, rc);
     Epot = ducastelle(atoms, neighbor_list, rc, A, xi, p, q, re);
     Ekin = ekin_direct_summation(atoms, mass);
@@ -60,8 +61,8 @@ void gold_melting_point(std::string filename, bool preheat_cluster=false){
         Etot = Epot + Ekin;
 
         //Saves Energy and Trajectory every few steps
-        if(i%100 == 0){
-            std::cout<<"T: "<<T<<std::endl;
+        if(i%1000 == 0){
+            std::cout<<i<<" T: "<<T<<std::endl;
             std::cout<<"Energy(pot+kin): "<<Epot<<" + "<<Ekin<<" = "<<Etot<<std::endl;
             E<<Epot<<";"<<Ekin<<";"<<Etot<<std::endl;
             write_xyz(traj, atoms); // All trajectories in one file.
@@ -69,7 +70,9 @@ void gold_melting_point(std::string filename, bool preheat_cluster=false){
 
         if (relax_time==RELAX_TIME){
             std::cout<<"velocity rescaled"<<std::endl;
-            velocity_rescale_energy(atoms, T, 10); //ToDo: Generalize code
+            velocity_rescale_energy(atoms, T, 15); //ToDo: Generalize code
+            atoms.velocities = atoms.velocities + (perturbations.setRandom()*1e-4);
+
         }
 
         if(relax_time<=AVERAGING_WINDOW) {

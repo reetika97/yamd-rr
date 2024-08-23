@@ -42,12 +42,24 @@ int main(int argc, char* argv[]) {
         std::cout << "Select_program: " && std::cin >> pgm_selection;
         std::cout << pgm_selection << " is being executed." << std::endl;
     }
-    else if(argc==2 ){
+    else if(argc>=2 ){
         pgm_selection = argv[1];
         std::cout <<pgm_selection<< " is being executed." << std::endl;
     }
 
     if(pgm_selection=="energy_conservation_simulation"){
+
+        //Default values of parameters
+        double sim_length=100, timestep=0.001, sigma=1.0, mass=1.0, epsilon=1.0;
+
+        if (argc > 2) sim_length = std::atof(argv[2]);
+        if (argc > 3) timestep = std::atof(argv[3]);
+        if (argc > 4) sigma = std::atof(argv[4]);
+        if (argc > 5) mass = std::atof(argv[5]);
+        if (argc > 6) epsilon = std::atof(argv[6]);
+
+        energy_conservation_simulation(sim_length, timestep, sigma,
+                                       mass, epsilon);
 
         //energy_conservation_simulation(100,0.0001);
         //energy_conservation_simulation(100,0.005);
@@ -55,7 +67,7 @@ int main(int argc, char* argv[]) {
         //energy_conservation_simulation(100,0.01);
         //energy_conservation_simulation(100,0.02);
         //energy_conservation_simulation(100,0.05);
-        energy_conservation_simulation();
+
 
     }
     else if(pgm_selection=="berendsen_simulation"){
@@ -102,10 +114,12 @@ int main(int argc, char* argv[]) {
 
     else if(pgm_selection=="gold_melting_point"){
 
+        //gold_melting_point("923_traj.xyz", true);
+        //gold_melting_point("923_heated_cluster.xyz");
         gold_melting_point("cluster_923.xyz", true);
         gold_melting_point("923_heated_cluster.xyz");
-        gold_melting_point("cluster_3871.xyz", true);
-        gold_melting_point("3871_heated_cluster.xyz");
+        //gold_melting_point("cluster_3871.xyz", true);
+        //gold_melting_point("3871_heated_cluster.xyz");
 
     }
 
