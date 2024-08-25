@@ -72,7 +72,14 @@ int main(int argc, char* argv[]) {
     }
     else if(pgm_selection=="berendsen_simulation"){
 
-        auto time_sim=berendsen_thermostat_simulation(100, 0.2);
+        int nb_atoms= 100; double target_temp=0.3;
+
+        if (argc > 2) nb_atoms = std::atoi(argv[2]);
+        if (argc > 3) target_temp = std::atof(argv[3]);
+
+        //auto time_sim=berendsen_thermostat_simulation(100, 0.2);
+        auto time_sim = berendsen_thermostat_simulation(nb_atoms,
+                                                        target_temp);
         std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
 
     }
@@ -93,7 +100,13 @@ int main(int argc, char* argv[]) {
 
     else if(pgm_selection=="equilibration_with_rc"){
 
-        auto time_sim=equilibration_with_rc(100, 0.2);
+        int nb_atoms=50; double target_temp=0.3;
+
+        if (argc > 2) nb_atoms = std::atoi(argv[2]);
+        if (argc > 3) target_temp = std::atof(argv[3]);
+
+        //auto time_sim=equilibration_with_rc(100, 0.2);
+        auto time_sim=equilibration_with_rc(nb_atoms, target_temp);
         std::cout << "Execution time: " << time_sim << " seconds" << std::endl;
 
     }
@@ -114,10 +127,16 @@ int main(int argc, char* argv[]) {
 
     else if(pgm_selection=="gold_melting_point"){
 
-        //gold_melting_point("923_traj.xyz", true);
+        std::string filename; bool preheat_cluster=false;
+
+        if (argc > 2) filename = argv[2];
+        if (argc > 3) {
+            if (strcmp(argv[3], "true") == 0 || strcmp(argv[3], "1") == 0) preheat_cluster = true;
+        }
+
+        gold_melting_point(filename, preheat_cluster);
+        //gold_melting_point("cluster_923.xyz", true);
         //gold_melting_point("923_heated_cluster.xyz");
-        gold_melting_point("cluster_923.xyz", true);
-        gold_melting_point("923_heated_cluster.xyz");
         //gold_melting_point("cluster_3871.xyz", true);
         //gold_melting_point("3871_heated_cluster.xyz");
 
