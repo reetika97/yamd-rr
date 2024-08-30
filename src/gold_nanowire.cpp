@@ -15,30 +15,31 @@
 #include <header_files/domain.h>
 #define SCALE_INTERVAL 200
 
-void gold_nanowire(){
+void gold_nanowire(std::string filename, double lx, double ly, double lz){
 
     MPI_Init(nullptr, nullptr);
     auto start = std::chrono::high_resolution_clock::now();
 
     std::cout<<MPI::comm_size(MPI_COMM_WORLD)<<std::endl;
 
-    double lz = 144.25, lz0 = 144.25;
+    //double lz = 144.25, lz0 = 144.25;
+    const double lx0=lx, ly0=ly, lz0 = lz;
     Eigen::Array3d domain_length;
 
-    Domain domain(MPI_COMM_WORLD, {50, 50, 144.25},
+    Domain domain(MPI_COMM_WORLD, {lx0, ly0, lz0},
                   {1, 1, MPI::comm_size(MPI_COMM_WORLD)},
                   {0, 0, 1});
 
     //ToCheck: Why am I getting different values with periodicity 001?
 
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
-    double rc = 7.0, timestep = 5, nb_steps = 10000; //1 timestep is 1fs
+    double rc = 7.0, timestep = 5, nb_steps = 20000; //1 timestep is 1fs
     double kb = 8.617 * pow(10,-5), mass=196.967*103.6, strain; //eV/K, g/mol
 
     double Etot, Epot_loc, Epot_total, Ekin_loc, Ekin_total, ghost_force_g;
 
     auto [names, positions]
-        {read_xyz("whisker_small_T0.xyz")};
+        {read_xyz(filename)};
     Atoms atoms(positions);
     atoms.masses.setConstant(mass);
 
@@ -56,16 +57,13 @@ void gold_nanowire(){
 
     for(int i=0; i<nb_steps; i++) {
 
-        ghost_force=0;
         if (i % SCALE_INTERVAL == 0 and i != 0){
-
-            svf<< strain <<  ";" << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
             std::cout<<"Scaling at "<<i<<std::endl;
             lz += 0.3;
             domain_length<<50,50,lz;
             domain.scale(atoms, domain_length);
         }
-
+        ghost_force=0;
         verlet_step1(atoms.positions, atoms.velocities, atoms.forces, timestep,
                      mass);
 
@@ -92,9 +90,10 @@ void gold_nanowire(){
                       MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
 
-        if (i % 200 == 0) {
+        if ((i+1) % SCALE_INTERVAL == 0) { //SCALE_INTERVAL is same as RELAX TIME
             domain.disable(atoms);
             if(domain.rank() == 0) {
+                std::cout<<"Saving at "<<i<<std::endl;
                 Etot = Epot_total + Ekin_total;
                 write_xyz(traj, atoms);
                 strain = (lz-lz0) / lz0;
@@ -102,6 +101,7 @@ void gold_nanowire(){
                           << Ekin_total << " = " << Etot << std::endl;
                 std::cout << "Strain: " << strain << std::endl;
                 std::cout << "F_lg: " << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
+                svf<< strain <<  ";" << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
 
             }
 

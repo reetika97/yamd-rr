@@ -150,7 +150,17 @@ int main(int argc, char* argv[]) {
 
     else if(pgm_selection=="gold_nano_wire"){
 
-        gold_nanowire();
+        std::string filename="whisker_small.xyz";
+        double lx=50, ly=50, lz=140.739;
+
+        if (argc > 2) filename = argv[2];
+        if (argc > 3) lx = std::atof(argv[3]);
+        if (argc > 4) ly = std::atof(argv[4]);
+        if (argc > 5) lz = std::atof(argv[5]);
+
+        preheat_atom_cluster(filename, 10e-5);
+
+        gold_nanowire("3050_heated_cluster.xyz", lx, ly, lz);
 
     }
 

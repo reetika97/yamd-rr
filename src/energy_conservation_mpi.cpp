@@ -13,7 +13,8 @@
 #include <header_files/ducastelle.h>
 #include <chrono>
 #include <header_files/domain.h>
-
+#include <header_files/domain.h>
+#define SAVE_INTERVAL 100
 /**
  * @brief MD simulation using MPI parallel processing for energy conservation.
  *
@@ -94,7 +95,7 @@ void energy_conservation_mpi(){
 
 
         // Saves Energy and Trajectory every few steps
-        if (i % 1000 == 0) {
+        if (i % SAVE_INTERVAL == 0) {
             domain.disable(atoms);
             if(domain.rank() == 0) {
                 Etot = Epot_total + Ekin_total;

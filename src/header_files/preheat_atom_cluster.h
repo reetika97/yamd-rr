@@ -6,6 +6,6 @@
 #define YAMD_HEAT_ATOM_CLUSTER_H
 #include <iostream>
 
-void preheat_atom_cluster(std::string filename);
+std::string preheat_atom_cluster(std::string filename, double target_temp = 600);
 
 #endif // YAMD_HEAT_ATOM_CLUSTER_H

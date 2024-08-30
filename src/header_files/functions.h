@@ -18,6 +18,8 @@ void gold_melting_point(std::string filename, bool preheat_cluster=false);
 
 void energy_conservation_mpi();
 
-void gold_nanowire();
+void gold_nanowire(std::string filename, double lx, double ly, double lz);
+
+std::string preheat_atom_cluster(std::string filename, double target_temp = 600);
 
 #endif // YAMD_RR_FUNCTIONS_H
