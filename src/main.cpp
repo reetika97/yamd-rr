@@ -128,17 +128,20 @@ int main(int argc, char* argv[]) {
     else if(pgm_selection=="gold_melting_point"){
 
         std::string filename; bool preheat_cluster=false;
+        double temp = 600;
 
         if (argc > 2) filename = argv[2];
         if (argc > 3) {
             if (strcmp(argv[3], "true") == 0 || strcmp(argv[3], "1") == 0) preheat_cluster = true;
         }
+        if (argc > 4) temp = std::atof(argv[4]);
 
-        gold_melting_point(filename, preheat_cluster);
-        //gold_melting_point("cluster_923.xyz", true);
-        //gold_melting_point("923_heated_cluster.xyz");
-        //gold_melting_point("cluster_3871.xyz", true);
-        //gold_melting_point("3871_heated_cluster.xyz");
+        if(preheat_cluster){
+            filename=preheat_atom_cluster(filename, temp);
+        }
+
+        gold_melting_point(filename);
+        //gold_melting_point("cluster_923.xyz");
 
     }
 
@@ -151,14 +154,15 @@ int main(int argc, char* argv[]) {
     else if(pgm_selection=="gold_nano_wire"){
 
         std::string filename="whisker_small.xyz";
-        double lx=50, ly=50, lz=140.739;
+        double lx=50, ly=50, lz=140.739, temp=10e-5;
 
         if (argc > 2) filename = argv[2];
         if (argc > 3) lx = std::atof(argv[3]);
         if (argc > 4) ly = std::atof(argv[4]);
         if (argc > 5) lz = std::atof(argv[5]);
+        if (argc > 6) temp = std::atof(argv[6]);
 
-        preheat_atom_cluster(filename, 10e-5);
+        preheat_atom_cluster(filename, temp);
 
         gold_nanowire("3050_heated_cluster.xyz", lx, ly, lz);
 

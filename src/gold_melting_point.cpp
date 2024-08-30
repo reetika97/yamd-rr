@@ -14,17 +14,12 @@
 
 
 
-void gold_melting_point(std::string filename, bool preheat_cluster=false){
+void gold_melting_point(std::string filename){
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
     double rc = 5.0, timestep = 5, nb_steps = 800000; //1 timestep is 1fs
     double kb = 8.617 * pow(10,-5), mass=196.967*103.6; //eV/K, g/mol
     NeighborList neighbor_list;
     double Epot, Ekin, Etot, T;
-
-    if(preheat_cluster){
-        preheat_atom_cluster(filename);
-        return;
-    }
 
     //initialize atom cluster
     auto [names, positions, velocities]
