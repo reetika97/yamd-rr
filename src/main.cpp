@@ -15,6 +15,7 @@
  * @param argc Number of command-line arguments.
  *             If argc == 1, the user is asked to choose selection in the simulation program.
  *             If argc == 2, if second argument is provided it is used as the simulation selection.
+ *             If argc >= 3, the additional parameters are used by functions
  * @param argv Array of command-line arguments.
  *             The second element (argv[1]) is used as the simulation program selection if provided.
  *
@@ -44,7 +45,6 @@ int main(int argc, char* argv[]) {
     }
     else if(argc>=2 ){
         pgm_selection = argv[1];
-        std::cout <<pgm_selection<< " is being executed." << std::endl;
     }
 
     if(pgm_selection=="energy_conservation_simulation"){
@@ -154,17 +154,20 @@ int main(int argc, char* argv[]) {
     else if(pgm_selection=="gold_nano_wire"){
 
         std::string filename="whisker_small.xyz";
-        double lx=50, ly=50, lz=140.739, temp=10e-5;
+        Eigen::Array3d domain_lengths;
+        double lx=50, ly=50, lz=140.739, temp=10e-5, del_l=0.3;
 
         if (argc > 2) filename = argv[2];
-        if (argc > 3) lx = std::atof(argv[3]);
-        if (argc > 4) ly = std::atof(argv[4]);
-        if (argc > 5) lz = std::atof(argv[5]);
-        if (argc > 6) temp = std::atof(argv[6]);
+        if (argc > 3) temp = std::atof(argv[3]);
+        if (argc > 4) del_l = std::atof(argv[4]);
 
-        preheat_atom_cluster(filename, temp);
+        filename = preheat_atom_cluster(filename, temp, domain_lengths);
 
-        gold_nanowire("3050_heated_cluster.xyz", lx, ly, lz);
+        std::cout<<"lx, ly, lz??? "<<std::endl;
+        std::cout<<"lx, ly, lz: "<<domain_lengths.transpose()<<std::endl;
+
+        gold_nanowire(filename, domain_lengths(0)+10, domain_lengths(1)+10,
+                      domain_lengths(2)+0.2, temp, del_l);
 
     }
 

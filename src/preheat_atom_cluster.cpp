@@ -19,9 +19,13 @@
  * @param filename The name of the .XYZ file containing the initial atomic positions.
  * @param target_temp The target temperature to which the atomic cluster should be heated. Defaults to 600 K.
  *
+ * @return string Returns filename of preheated cluster
  * All other parameters can be changed directly in the code.
  */
-std::string preheat_atom_cluster(std::string filename, double target_temp = 600){
+
+Eigen::Array3d default_array(0.0, 0.0, 0.0);
+std::string preheat_atom_cluster(std::string filename, double target_temp = 600,
+                                 Eigen::Array3d &domain_lengths = default_array){
 
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
     double rc = 7.0, timestep = 5, nb_steps = 5000; //1 timestep is 1fs
@@ -90,6 +94,9 @@ std::string preheat_atom_cluster(std::string filename, double target_temp = 600)
     std::cout << "T: " << T << std::endl;
     std::cout << "Energy(pot+kin): " << Epot << " + " << Ekin << " = "
               << Etot << std::endl;
+
+    domain_lengths = atoms.positions.rowwise().maxCoeff(); // -
+                    // atoms.positions.rowwise().minCoeff() ;
 
     write_xyz(traj, atoms); // Trajectory of heated cluster
 

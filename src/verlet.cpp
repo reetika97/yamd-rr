@@ -4,6 +4,22 @@
 
 #include "header_files/verlet.h"
 
+/**
+ * @brief Performs the predictor step of the velocity Verlet integration for a single atom.
+ *
+ * @param x Position of the atom in the x-direction.
+ * @param y Position of the atom in the y-direction.
+ * @param z Position of the atom in the z-direction.
+ * @param vx Velocity of the atom in the x-direction.
+ * @param vy Velocity of the atom in the y-direction.
+ * @param vz Velocity of the atom in the z-direction.
+ * @param fx Force acting on the atom in the x-direction.
+ * @param fy Force acting on the atom in the y-direction.
+ * @param fz Force acting on the atom in the z-direction.
+ * @param timestep Time increment for the integration.
+ * @param mass Mass of the atom.
+ */
+
 //Single Atom Velocity Verlet
 void verlet_step1(double &x, double &y, double &z, double &vx, double &vy, double &vz,
                   double fx, double fy, double fz, double timestep, double mass) {
@@ -20,6 +36,19 @@ void verlet_step1(double &x, double &y, double &z, double &vx, double &vy, doubl
 
 }
 
+/**
+ * @brief Performs the corrector step of the velocity Verlet integration for a single atom.
+ *
+ * @param vx Velocity of the atom in the x-direction.
+ * @param vy Velocity of the atom in the y-direction.
+ * @param vz Velocity of the atom in the z-direction.
+ * @param fx Force acting on the atom in the x-direction.
+ * @param fy Force acting on the atom in the y-direction.
+ * @param fz Force acting on the atom in the z-direction.
+ * @param timestep Time increment for the integration.
+ * @param mass Mass of the atom.
+ */
+
 void verlet_step2(double &vx, double &vy, double &vz, double fx, double fy, double fz,
                   double timestep, double mass) {
 
@@ -29,6 +58,23 @@ void verlet_step2(double &vx, double &vy, double &vz, double fx, double fy, doub
     vz += 0.5 * fz * timestep / mass;
 
 }
+
+/**
+ * @brief Propagates a single atom using the velocity Verlet method.
+ *
+ * @param x Position of the atom in the x-direction.
+ * @param y Position of the atom in the y-direction.
+ * @param z Position of the atom in the z-direction.
+ * @param vx Velocity of the atom in the x-direction.
+ * @param vy Velocity of the atom in the y-direction.
+ * @param vz Velocity of the atom in the z-direction.
+ * @param fx Force acting on the atom in the x-direction.
+ * @param fy Force acting on the atom in the y-direction.
+ * @param fz Force acting on the atom in the z-direction.
+ * @param timestep Time increment for the integration.
+ * @param mass Mass of the atom.
+ * @param nb_steps Number of integration steps to perform.
+ */
 
 void single_atom_verlet(double &x, double &y, double &z, double &vx, double &vy, double &vz,
                         double fx, double fy, double fz, double timestep, double mass, int nb_steps){
@@ -40,6 +86,16 @@ void single_atom_verlet(double &x, double &y, double &z, double &vx, double &vy,
         verlet_step2(vx, vy, vz, fx, fy, fz, timestep, mass);
     }
 }
+
+/**
+ * @brief Performs the predictor step of the velocity Verlet integration for multiple atoms.
+ *
+ * @param positions Array of atomic positions.
+ * @param velocities Array of atomic velocities.
+ * @param forces Array of forces acting on the atoms.
+ * @param timestep Time increment for the integration.
+ * @param mass Mass of each atom.
+ */
 
 //Multi Atom Velocity Verlet
 void verlet_step1(Eigen::Array3Xd &positions, Eigen::Array3Xd &velocities,
@@ -67,6 +123,15 @@ void verlet_step1(Eigen::Array3Xd &positions, Eigen::Array3Xd &velocities,
 
 }
 
+/**
+ * @brief Performs the corrector step of the velocity Verlet integration for multiple atoms.
+ *
+ * @param velocities Array of atomic velocities.
+ * @param forces Array of forces acting on the atoms.
+ * @param timestep Time increment for the integration.
+ * @param mass Mass of each atom.
+ */
+
 void verlet_step2(Eigen::Array3Xd &velocities, const Eigen::Array3Xd &forces,
                   double timestep, double mass) {
 
@@ -81,6 +146,17 @@ void verlet_step2(Eigen::Array3Xd &velocities, const Eigen::Array3Xd &forces,
     vy += 0.5 * fy * timestep / mass;
     vz += 0.5 * fz * timestep / mass;
 }
+
+/**
+ * @brief Propagates multiple atoms using the velocity Verlet method..
+ *
+ * @param positions Array of atomic positions.
+ * @param velocities Array of atomic velocities.
+ * @param forces Array of forces acting on the atoms.
+ * @param timestep Time increment for the integration.
+ * @param mass Mass of each atom.
+ * @param nb_steps Number of integration steps to perform.
+ */
 
 void multi_atom_verlet(Eigen::Array3Xd &positions, Eigen::Array3Xd &velocities,
                        const Eigen::Array3Xd &forces, double timestep, double mass, int nb_steps){
