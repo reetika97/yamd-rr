@@ -1,5 +1,5 @@
 #!/bin/bash -x
-#SBATCH --nodes=1
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=16
 #SBATCH --time=10:00:00
 #SBATCH -J YAMD
