@@ -11,9 +11,9 @@
 #include <chrono>
 #define save_interval 1000
 /**
- * @brief Equilibrates a molecular dynamics system of atoms, applying the Berendsen thermostat
- * to control the temperature. The simulation runs in two phases:
+ * @brief Equilibrates a molecular dynamics system of atoms, applying the Berendsen thermostat to control the temperature.
  *
+ * The simulation runs in two phases:
  * 1. **Equilibration Phase:** The Berendsen thermostat is applied to adjust the system temperature to a target value.
  * 2. **Energy conservation Phase:** The thermostat is turned off, allowing the system to relax naturally, with energy conservation monitored.
  *

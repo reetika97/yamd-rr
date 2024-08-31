@@ -7,8 +7,10 @@
 
 /**
  * @brief Applies the Berendsen thermostat to rescale the velocities of atoms.
- * This function calculates a rescale factor based on the difference between the target temperature and the current
- * temperature and the relaxation time.
+ *
+ * Simulates the Berendsen thermostat to rescale the velocities of atoms and thereby the temperature.
+ * This function calculates a rescale factor based on the difference between the
+ * target temperature and the current temperature and the relaxation time.
  *
  * @param atoms `Atoms` object passed by reference containing the current velocities of the atoms.
  * @param temperature The current temperature of the system.
@@ -36,6 +38,8 @@ double berendsen_thermostat(Atoms &atoms, double temperature, double timestep,
 
 /**
  * @brief Rescales the temperature of system by a specified amount.
+ *
+ * Rescales the temperature by rescaling velocities of the system by a specified amount.
  * Used to supply external energy into the system.
  *
  *
