@@ -12,6 +12,18 @@
 #define RELAX_TIME 1500
 #define AVERAGING_WINDOW 500
 
+/**
+ * @brief Simulates the melting process of a gold atom cluster to estimate its thermodynamic properties.
+ *
+ * This function runs a molecular dynamics simulation to model the behavior of a gold atom cluster
+ * as it is gradually heated. The temperature and total energy of the system are tracked over time,
+ * to calculate melting point, latent heat and specific heat of the gold cluster. The simulation uses the Ducastelle
+ * potential for interatomic interactions.
+ *
+ * @param filename The name of the .XYZ file containing the initial positions and velocities of the atoms.
+ *
+ * All other parameters can be changed directly in the code.
+ */
 
 
 void gold_melting_point(std::string filename){

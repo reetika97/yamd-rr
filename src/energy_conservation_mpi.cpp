@@ -15,6 +15,7 @@
 #include <header_files/domain.h>
 #include <header_files/domain.h>
 #define SAVE_INTERVAL 100
+
 /**
  * @brief MD simulation using MPI parallel processing for energy conservation.
  *

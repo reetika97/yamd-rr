@@ -15,7 +15,27 @@
 #include <header_files/domain.h>
 #define SCALE_INTERVAL 200
 
-void gold_nanowire(std::string filename, double lx, double ly, double lz){
+/**
+ * @brief Simulates the stretching of a gold nanowire to examine stress-strain.
+ *
+ * This function models the behaviour of gold nanowire under
+ * tensile strain. The nanowire is periodically stretched by a small increment, and
+ * the resulting stress is calculated. The simulation uses MPI for
+ * parallelization and introducing strain.
+ *
+ * @param filename The name of the .XYZ file containing the initial atomic positions of the nanowire.
+ * @param lx Initial length of the nanowire in the x-dimension.
+ * @param ly Initial length of the nanowire in the y-dimension.
+ * @param lz Initial length of the nanowire in the z-dimension (tensile direction).
+ * @param temp Target temperature to be maintained during the simulation.
+ * @param del_l The increment by which the length of the nanowire is increased in each scaling step.
+ *
+ * All other parameters can be changed directly in the code.
+ */
+
+
+void gold_nanowire(std::string filename, double lx, double ly, double lz,
+                   double temp, double del_l){
 
     MPI_Init(nullptr, nullptr);
     auto start = std::chrono::high_resolution_clock::now();
@@ -30,10 +50,11 @@ void gold_nanowire(std::string filename, double lx, double ly, double lz){
                   {1, 1, MPI::comm_size(MPI_COMM_WORLD)},
                   {0, 0, 1});
 
-    //ToCheck: Why am I getting different values with periodicity 001?
+    std::cout<<"lz= "<<(domain.domain_length(2))<<std::endl;
+
 
     double A = 0.2061, xi = 1.790, p = 10.229, q = 4.036, re = 4.079/sqrt(2);
-    double rc = 7.0, timestep = 5, nb_steps = 20000; //1 timestep is 1fs
+    double rc = 7.0, timestep = 5, nb_steps=SCALE_INTERVAL*0.22*lz0/del_l; //nb_steps = 20000; //1 timestep is 1fs
     double kb = 8.617 * pow(10,-5), mass=196.967*103.6, strain; //eV/K, g/mol
 
     double Etot, Epot_loc, Epot_total, Ekin_loc, Ekin_total, ghost_force_g;
@@ -43,9 +64,12 @@ void gold_nanowire(std::string filename, double lx, double ly, double lz){
     Atoms atoms(positions);
     atoms.masses.setConstant(mass);
 
-    std::ofstream traj("traj2.xyz");
-    std::ofstream svf("svf.csv");
-    svf<<"strain;force_lg\n";
+    auto file_prefix = std::to_string(atoms.nb_atoms()) + "_" +
+                       std::to_string(del_l) + "_" + std::to_string(temp) + "_";
+
+    std::ofstream traj(file_prefix + "traj.xyz");
+    std::ofstream svf(file_prefix + "svf.csv");
+    svf<<"strain;force_lg;area\n";
 
     domain.enable(atoms);
 
@@ -59,9 +83,10 @@ void gold_nanowire(std::string filename, double lx, double ly, double lz){
 
         if (i % SCALE_INTERVAL == 0 and i != 0){
             std::cout<<"Scaling at "<<i<<std::endl;
-            lz += 0.3;
-            domain_length<<50,50,lz;
+            lz += del_l;
+            domain_length<<lx,ly,lz;
             domain.scale(atoms, domain_length);
+            std::cout<<"lz= "<<(domain.domain_length(2))<<std::endl;
         }
         ghost_force=0;
         verlet_step1(atoms.positions, atoms.velocities, atoms.forces, timestep,
@@ -80,7 +105,7 @@ void gold_nanowire(std::string filename, double lx, double ly, double lz){
 
         auto T = 2 * Ekin_loc / (atoms.nb_atoms() * kb * 3);
         berendsen_thermostat(atoms,T,timestep,
-                             100*timestep, 10e-5);
+                             100*timestep, temp);
 
         MPI_Allreduce(&Epot_loc, &Epot_total, 1,
                       MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -93,6 +118,7 @@ void gold_nanowire(std::string filename, double lx, double ly, double lz){
         if ((i+1) % SCALE_INTERVAL == 0) { //SCALE_INTERVAL is same as RELAX TIME
             domain.disable(atoms);
             if(domain.rank() == 0) {
+
                 std::cout<<"Saving at "<<i<<std::endl;
                 Etot = Epot_total + Ekin_total;
                 write_xyz(traj, atoms);
@@ -101,7 +127,9 @@ void gold_nanowire(std::string filename, double lx, double ly, double lz){
                           << Ekin_total << " = " << Etot << std::endl;
                 std::cout << "Strain: " << strain << std::endl;
                 std::cout << "F_lg: " << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
-                svf<< strain <<  ";" << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD) << std::endl;
+                std::cout << "Area: " << (lx*ly) << std::endl;
+                svf<< strain <<  ";" << ghost_force_g/MPI::comm_size(MPI_COMM_WORLD)<<
+                    ";" << (lx*ly) << std::endl;
 
             }
 

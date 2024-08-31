@@ -11,7 +11,8 @@
 
 /**
  * @brief Simulates the energy conservation of MD simulation using
- * Lennard-Jones potential and the Velocity Verlet algorithm.
+ *
+ * Simulates an MD system using Lennard-Jones potential and the Velocity Verlet algorithm.
  * The potential energy, kinetic energy, and total energy, along with trajectory
  * of the system are calculated and logged at regular intervals.
  *

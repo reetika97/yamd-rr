@@ -12,10 +12,12 @@
 #define save_interval 1000
 
 /**
- * @brief Simulates the equilibration of molecular dynamics system of atoms
+ * @brief MD simulation using LJ potential with cutoff radius and berendsen thermostat.
+ *
+ *
+ * Simulates the equilibration of molecular dynamics system of atoms
  * using Berendsen thermostat and Lennard-Jones potential with
  * cutoff radius and measures the simulation duration. The simulation runs in two phases:
- *
  * 1. **Equilibration Phase:** The Berendsen thermostat is applied to adjust the system temperature to a target value.
  * 2. **Energy conservation Phase:** The thermostat is turned off, allowing the system to relax naturally, with energy conservation monitored.
  *
