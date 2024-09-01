@@ -1,201 +1,88 @@
-# Meson sekelton code
+# Molecular Dynamics Simulation (Gold Atoms)
 
-This repository contains a [Meson](https://mesonbuild.com/) skeleton. It is used in the [High-Performance Computiong:  MD
-with C++
-project](https://pastewka.github.io/MolecularDynamics/_project/general_remarks.html).
+## Overview
 
-## Getting started
+This project contains various simulation programs designed to execute different molecular dynamics (MD) simulations, such as energy conservation, Berendsen thermostat, gold melting point, and gold nanowire simulations. The program allows users to select and run specific simulations via command-line arguments or through an interactive prompt.
 
-Click the `Use this template` button above, then clone the newly created
-repository, as described in [the first
-milestone](https://pastewka.github.io/MolecularDynamics/_project/milestone01.html).
+## Installation
 
-### Compiling using CLion
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/reetika97/yamd-rr.git
+    ```
+2. Compile the program:
+    ```bash
+    cd <your repository>
+    
+    # Configure and create build directory
+    meson setup builddir --buildtype=release
+    
+    # Compile
+    cd builddir
+    meson compile
+    
+    # Run tests
+    meson test
 
-> Note: for Windows users, please follow [these
-> instructions](https://www.jetbrains.com/help/clion/how-to-use-wsl-development-environment-in-product.html)
-> in addition to the text below.
+    # Run executables
+    cd src
+    ./src_main
 
-If you are using CLion, you can open your freshly cloned project by clicking on
-the "Open" button in the CLion welcome window. If prompted, trust the project.
+    #OR for parallel mpi programs (only via command line)
+    mpirun -n <#cores> ./src_main <selected_program>
+    ```
 
-You can change Meson build option in "**File > Settings > Build, Execution, Deployment > Meson**".
-This windows allows to set the `buildtype` option, which controls the level of optimization applied to
-the code. `debug` disables optimizations and turns on useful debugging features.
-This mode should be used when developing and testing code.
-`release` turns on aggressive optimization. This mode should be used when
-running production simulations. Add `--buildtype=release` or `--buildtype=debug` to "Setup options"
-to switch between the two.
+Ensure that the necessary files, header files and libraries are correctly linked during compilation.
 
-To run the first milestone executable, click on the dialog directly right of the
-green hammer in the upper right toolbar, select "milestone01", and click
-the green arrow right of that dialog. You should see the output in the "Run"
-tab, in the lower main window.
+## Usage
 
-To run the tests, select "tests" in the same dialog, then run. In the lower
-window, on the right, appears a panel that enumerates all the tests that were
-run and their results.
+The program can be executed via the command line. Depending on the number of command-line arguments provided, the program either prompts for input or uses the arguments directly.
 
-Try compiling and running for both `debug` and `release` configurations. Don't
-forget to switch between them when testing code or running production simulations.
+### Command-Line Arguments
 
-### Compiling from the command line
+- `argc == 1`: The program will prompt the user to select the simulation to run.
+- `argc == 2`: The second argument specifies the simulation to execute.
+- `argc >= 3`: Additional parameters are used by the selected simulation.
 
-The command line (terminal) may look daunting at first, but it has the advantage
-of being the same across all UNIX platforms, and does not depend on a specific
-IDE. The standard Meson workflow is to create a `builddir/` directory which will
-contain all the build files. To do that, and compile your project, run:
+### Available Simulations
 
+| Simulation Program               | Command                    | Description                                                                 | Additional Parameters |
+|----------------------------------|----------------------------|-----------------------------------------------------------------------------|-----------------------|
+| **Energy Conservation Simulation**   | `energy_conservation_simulation` | Simulates an MD system using LJ-potential and the Velocity Verlet algorithm. Demonstrates the energy conservation in the system.                      | `sim_length` (double), `timestep` (double), `sigma` (double), `epsilon` (double), `mass` (double) |
+| **Berendsen Thermostat Simulation**  | `berendsen_simulation`      | Applies the Berendsen thermostat to MD simulation and equilibrates the system.                  | `nb_atoms` (int), `target_temp` (double) |
+| **Berendsen Execution Time**         | `berendsen_execution_time`  | Measures the execution time for the Berendsen simulation with varying number of atoms. | None |
+| **Equilibration with cutoff radius**            | `equilibration_with_rc`     | Runs MD simulation using LJ-potential with a cutoff radius.                                     | `nb_atoms` (int), `target_temp` (double) |
+| **Equilibration with Rc Execution Time**  | `equilibration_rc_execution_time` | Measures the execution time of the equilibration with cutoff radius for varying number of atoms.   | None |
+| **Gold Melting Point**               | `gold_melting_point`        | Uses Gupta-Ducastelle potential to simulate melting of gold clusters.                   | `filename` (string), `preheat_cluster` (bool), `temp` (double) |
+| **Energy Conservation MPI**          | `energy_conservation_mpi`   | Executes MD simulation using MPI. Demonstrates energy conservation                        | None |
+| **Gold Nanowire Simulation**         | `gold_nano_wire`            | Simulates stress and strain on a gold nanowire.                              | `filename` (string), `temp` (double), `del_l` (double) |
+
+## Examples
+
+### Example 1: Energy Conservation Simulation
 ```bash
-cd <your repository>
-
-# Configure and create build directory
-meson setup builddir
-
-# Compile
-cd builddir
-meson compile
-
-# Run executable and tests
-./milestones/01/01
-meson test
+# sim_length=100, timestep=0.001, sigma=1.0, epsilon=1.0, mass=1.0 
+./src-main energy_conservation_simulation 100 0.001 1.0 1.0 1.0
 ```
-
-Note that CLion is by default configured to create a `buildDir/` directory
-(with a capital `D`).
-
-If there are no errors then you are all set! Note that the flag
-`--buildtype=debug` should be changed to
-`--buildtype=release` when you run a production simulation, i.e. a
-simulation with more than a few hundred atoms. This turns on aggressive compiler
-optimizations, which results in speedup. However, when writing the code and
-looking for bugs, `debug` should be used instead.
-
-Try compiling and running tests with both compilation configurations.
-
-### Compiling on bwUniCluster, with MPI
-
-The above steps should be done *after* loading the appropriate packages:
-
+### Example 2: EBerendsen Thermostat Simulation
 ```bash
-module load compiler/gnu mpi/openmpi
-
-# then in build/
-meson setup builddir --buildtype=release
-cd builddir
-meson compile
+# nb_atoms=100, target_temp=0.3
+./src-main berendsen_simulation 100 0.3
 ```
 
-## How to add code to the repository
-
-There are three places where you are asked to add code:
-
-- `src/` is the core of the MD code. Code common to all the simulations you will
-  run should be added here. This includes implementation of time stepping
-  scheme, potentials, thermostats, neighbor lists, atom containers, and
-  implementation files that will be provided by us (e.g. domain decomposition
-  implementation). The `meson.build` file in `src/` creates a [static
-  library](https://en.wikipedia.org/wiki/Static_library) which is linked to all
-  the other targets in the repository, and which propagates its dependency, so
-  that there is no need to explicitly link against Eigen or MPI.
-- `tests/` contains tests for the library code code. It uses
-  [GoogleTest](https://google.github.io/googletest/) to define short, simple
-  test cases. This is where you will add tests for the time integration,
-  potentials, thermostats, etc., but it should not contain "real physics"
-  simulations, such as heat capacity calculations.
-- `milestones/` contains the "real physics" simulations that are required in
-  milestones 04, 07, 08, 09. It should only contain code specific to the
-  milestones, i.e. the `main()` function running the simulation, and input data
-  files that we provide.
-
-### Adding to `src/`
-
-Adding files to `src/` is straightforward: create your files, e.g. `lj.h` and
-`lj.cpp`, then update the `lib_sources` variable in
-`meson.build`:
-
-```meson
-lib_sources = [  # All source files (excluding headers)
-    'hello.cpp',
-    'lj.cpp'
-]
-```
-
-### Adding to `tests/`
-
-Create your test file, e.g. `test_verlet.cpp` in `tests/`, then modify the
-`test_sources` variable in `tests/meson.build`. Test that your test was
-correctly added by running `meson compile` in the build directory: your test should
-show up in the output.
-
-### Adding to `milestones/`
-
-Create a new directory, e.g. with `mkdir milestones/04`, then add `subdir('04')`
-to `milestones/meson.build`, then create & edit
-`milestones/04/meson.build`:
-
-```meson
-executable(
-    'milestone04',
-    'main.cpp',
-    include_directories : [lib_incdirs],
-    link_with : [lib],
-    dependencies : [eigen, mpi]
-)
-```
-
-You can now create & edit `milestones/04/main.cpp`, which should include a
-`main()` function as follows:
-
-```c++
-int main(int argc, char* argv[]) {
-    return 0;
-}
-```
-
-The code of your simulation goes into the `main()` function.
-
-#### Input files
-
-We often provide input files (`.xyz` files) for your simulations, for example in
-milestone 4. You should place these in e.g. `milestones/04/`, and add the
-following to `milestones/04/meson.build`:
-
-```meson
-fs = import('fs')
-fs.copyfile('lj54.xyz')
-```
-
-This will copy the file `milestone/04/lj54.xyz` to
-`<build>/milestone/04/lj54.xyz`, but **only** when the executable for the milestone
-is rebuilt. To trigger a rebuild you can erase the `<build>/milestone/04`
-directory and `meson compile` again.
-
-*Note:* `.xyz` files are ignored by Git. That's on purpose to avoid you staging
-very large files in the git tree.
-
-## Pushing code to GitHub
-
-If you have added files to your local repositories, you should commit and push them to
-GitHub. To create a new commit (i.e. put your files in the repository's
-history), simply run:
-
+### Example 3: Equilibration with Rc
 ```bash
-git status
-# Look at the files that need to be added
-git add <files> ...
-git commit -m '<a meaningful commit message!>'
-git push
+# nb_atoms=50, target_temp=0.3
+./src-main equilibration_with_rc 50 0.3
+```
+### Example 4: Gold Melting Point
+```bash
+# filename="cluster_923.xyz", preheat_cluster=true, temp=600
+./src-main gold_melting_point cluster_923.xyz true 600
 ```
 
-This repository is setup with continuous integration (CI), so all your tests
-will run automatically when you push. This is very handy to test if you have
-breaking changes.
-
-### Git in CLion
-
-If you are using CLion, you can use Git directly from its interface. To add
-files, right click the file you wish to add, then "Git > Add". Once you are
-ready to commit, "Git > Commit" from the main menu bar. Add a message in the
-lower left window where it reads "Commit message", then click "Commit" or
-"Commit and Push...".
+### Example 5: Gold Nanowire Simulation
+```bash
+# filename="whisker_small.xyz", temp=1e-5, del_l=0.3
+./src-main gold_nano_wire whisker_small.xyz 1e-5 0.3
+```

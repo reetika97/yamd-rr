@@ -55,18 +55,12 @@ int main(int argc, char* argv[]) {
         if (argc > 2) sim_length = std::atof(argv[2]);
         if (argc > 3) timestep = std::atof(argv[3]);
         if (argc > 4) sigma = std::atof(argv[4]);
-        if (argc > 5) mass = std::atof(argv[5]);
-        if (argc > 6) epsilon = std::atof(argv[6]);
+        if (argc > 5) epsilon = std::atof(argv[5);
+        if (argc > 6) mass = std::atof(argv[6]);
+
 
         energy_conservation_simulation(sim_length, timestep, sigma,
-                                       mass, epsilon);
-
-        //energy_conservation_simulation(100,0.0001);
-        //energy_conservation_simulation(100,0.005);
-        //energy_conservation_simulation(100,0.002);
-        //energy_conservation_simulation(100,0.01);
-        //energy_conservation_simulation(100,0.02);
-        //energy_conservation_simulation(100,0.05);
+                                       epsilon, mass);
 
 
     }
@@ -77,7 +71,6 @@ int main(int argc, char* argv[]) {
         if (argc > 2) nb_atoms = std::atoi(argv[2]);
         if (argc > 3) target_temp = std::atof(argv[3]);
 
-        //auto time_sim=berendsen_thermostat_simulation(100, 0.2);
         auto time_sim = berendsen_thermostat_simulation(nb_atoms,
                                                         target_temp);
         std::cout << "Execution time: " << time_sim << " seconds" << std::endl;

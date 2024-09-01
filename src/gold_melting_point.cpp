@@ -5,7 +5,6 @@
 #include <header_files/ducastelle.h>
 #include <header_files/lj_direct_summation.h>
 #include <header_files/neighbors.h>
-#include <header_files/preheat_atom_cluster.h>
 #include <header_files/types.h>
 #include <header_files/verlet.h>
 #include <iostream>
