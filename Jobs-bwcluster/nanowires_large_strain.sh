@@ -1,6 +1,6 @@
 #!/bin/bash -x
 #SBATCH --nodes=2
-#SBATCH --ntasks-per-node=16
+#SBATCH --ntasks-per-node=40
 #SBATCH --time=10:00:00
 #SBATCH -J YAMD
 #SBATCH --mem=6gb
