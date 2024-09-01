@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         if (argc > 2) sim_length = std::atof(argv[2]);
         if (argc > 3) timestep = std::atof(argv[3]);
         if (argc > 4) sigma = std::atof(argv[4]);
-        if (argc > 5) epsilon = std::atof(argv[5);
+        if (argc > 5) epsilon = std::atof(argv[5]);
         if (argc > 6) mass = std::atof(argv[6]);
 
 
